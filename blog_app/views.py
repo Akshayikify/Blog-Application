@@ -43,22 +43,28 @@ def register(request):
     else:
         form=UserRegistrationForm()
     return render(request,'register.html',{'form':form,'title':'Register'})
-        
-def home(request):
-    return render(request,'index.html',{'title':'home'})
 
 def product_list(request):
     products=Product.objects.all()
     return render(request,'index.html',{'products':products})
 def product_detail(request,pk):
     product=Product.objects.get(pk=pk)
-    return render(request,'index2.html',{'product':product})
+    return render(request,'index.html',{'product':product,'title':'product view'})
+def create_product(request):
+    form=ProductForm(request.POST,request.FILES)
+    if request.method=='POST':
+        if form.is_valid():
+            product=form.save()
+            messages.success(request,f'The product {product.name} is successfully updated!')
+            return redirect('product_list')
+    return redirect('product_list')
 def edit_product(request,pk):
     product=get_object_or_404(Product,pk=pk)
     if request.method=='POST':
         form=ProductForm(request.POST,instance=pk)
         if form.is_valid():
-            form.save()
+            updated_product=form.save()
+            messages.success(request,f'The product {updated_product.name} is successfully updated!')
             return redirect('product_list')
     else:
         form=ProductForm(instance=pk)
@@ -66,8 +72,11 @@ def edit_product(request,pk):
             
 def delete_product(request,pk):
     product=get_object_or_404(Product,pk=pk)
+    form=ProductForm(request.POST,instance=pk)
+    name=form.cleaned_data.get('name')
     if request.method=='POST':
         product.delete()
+        messages.info(request,f'The product {name} is successfully deleted!')
         return redirect('product_list')
     return render(request,'delete.html',{'product':product})
     

@@ -1,0 +1,13 @@
+{% block edit %}
+{% for message in messages %}
+    <div class="alert alert-success" role="alert">
+     {{message}}
+</div>
+{% endfor %}
+<h2>Edit Blog Post</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Delete</button>
+</form>
+{% endblock %}
