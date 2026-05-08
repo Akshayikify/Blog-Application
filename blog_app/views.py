@@ -17,7 +17,7 @@ def Login(request):
         user=authenticate(request,username=username,password=password)
         if user is not None:
             form=login(request,user)
-            messages.success(request,f'welcome {username}!!')
+            messages.success(request,f'welcome {username}!')
             return redirect('home')
         else:
             messages.info(request,f'{username} does not exist. Please sign up.')
@@ -46,37 +46,38 @@ def register(request):
 
 def product_list(request):
     products=Product.objects.all()
-    return render(request,'index.html',{'products':products})
-def product_detail(request,pk):
+    return render(request,'index.html',{'products':products,'title':'home'})
+def product_details(request,pk):
     product=Product.objects.get(pk=pk)
-    return render(request,'index.html',{'product':product,'title':'product view'})
+    return render(request,'index2.html',{'product':product})
 def create_product(request):
-    form=ProductForm(request.POST,request.FILES)
     if request.method=='POST':
+        form=ProductForm(request.POST,request.FILES)
         if form.is_valid():
-            product=form.save()
-            messages.success(request,f'The product {product.name} is successfully updated!')
+            form.save()
+            messages.success(request,f'A new blog is created successfully')
             return redirect('product_list')
-    return redirect('product_list')
+    else:
+        form=ProductForm()
+    return render(request,'create_blog.html',{'form':form})
 def edit_product(request,pk):
     product=get_object_or_404(Product,pk=pk)
     if request.method=='POST':
-        form=ProductForm(request.POST,instance=pk)
+        form=ProductForm(request.POST,request.FILES,instance=product)
         if form.is_valid():
-            updated_product=form.save()
-            messages.success(request,f'The product {updated_product.name} is successfully updated!')
+            form.save()
+            messages.success(request,f'Blog {product.name} is updated!')
             return redirect('product_list')
     else:
-        form=ProductForm(instance=pk)
-    return render(request,'index2.html',{'form':form})
-            
+        form=ProductForm(instance=product)
+    return render(request,'edit.html',{'form':form})
 def delete_product(request,pk):
     product=get_object_or_404(Product,pk=pk)
-    form=ProductForm(request.POST,instance=pk)
-    name=form.cleaned_data.get('name')
     if request.method=='POST':
         product.delete()
-        messages.info(request,f'The product {name} is successfully deleted!')
+        messages.info(request,f'Blog {product.name} is deleted successfully!')
         return redirect('product_list')
     return render(request,'delete.html',{'product':product})
+        
+    
     

@@ -10,33 +10,22 @@
     <title>{{title}}</title>
 </head>
 <body>
+  <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <a class="navbar-brand" href="{% url 'product_list' %}">Blog Spot</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="{% url 'product_list' %}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
+          <a class="nav-link active" href="{% url 'product_list' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Blogs
           </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
         </li>
       </ul>
       <div class="d-flex gap-3">
@@ -70,29 +59,29 @@
   <h1>Please login...</h1>
  {% endif %}
  {% endblock start %}
-<!--form for creating blog -->
-    <!--form for creating product -->
-{% if user.is_authenticated %}
-<form method="post" action="{% url 'create' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form|crispy }}  
-  <button type="submit" class="btn btn-primary">Create</button>
-</form>
-{% endif %}
-<!-- Displaying the blogs -->
-{% block product %}
-{% for product in products %}
+ <!-- Create blog reference link -->
+  <p>Want to create a new blog?<a href="{% url 'create' %}">Click here</a></p>
+<!-- Display the blog products -->
+ {% block product %}
+ {% if user.is_authenticated %}
+ <div class="d-flex gap-3">
+   {% for product in products %}
   <div class="card" style="width: 18rem;">
-  <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-  <div class="card-body">
-      <h5 class="card-title">{{product.name}}</h5>
-      <p class="card-text">{{product.description}}</p>
-      <a href="{% url 'product_detail' product.pk %}" class="btn btn-primary">View</a>
-      <a href="{% url 'edit_product' product.pk %}" class="btn btn-primary">Edit</a>
-      <a href="{% url 'delete_product' product.pk %}" class="btn btn-primary">delete</a>
+    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+    <div class="card-body">
+      <h5 class="card-title">{{ product.name }}</h5>
+      <p class="card-text">{{ procuct.description }}</p>
+      <p class="card-text"><small class="text-body-secondary">Last updated {{product.updated_on}}</small></p>
+      <a class="btn btn-primary" href="{% url 'product_details' pk=product.pk %}" role="button">View</a>
+      <a class="btn btn-primary" href="{% url 'delete' pk=product.pk %}" role="button">Delete</a>
+      <a class="btn btn-primary" href="{% url 'edit' pk=product.pk %}" role="button">Update</a>
+    </div>
+    </div>
+    {% endfor %}
   </div>
 </div>
-{% endfor %}
-{% endblock product %}
+{% endif %}
+{% endblock product%}
+
 </body>
 </html>
